@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Yap veya Kayıt Ol</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-hover: #0056b3;
+            --error-color: #dc3545;
+            --success-color: #28a745;
+            --admin-color: #6f42c1;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: url('https://images.unsplash.com/photo-1518717758536-85ae29035b6d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 450px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 12%;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+
+        .container input {
+            width: 80%;
+            padding: 12px 12px 12px 40px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .container input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12%;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #777;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .container button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 80%;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        .container button:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-register {
+            background: #6c757d;
+        }
+
+        .btn-register:hover {
+            background: #5a6268;
+        }
+
+        .btn-admin {
+            background: var(--admin-color);
+            margin-top: 10px;
+        }
+
+        .btn-admin:hover {
+            background: #5a2d9c;
+        }
+
+        .error, .success {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .error {
+            color: var(--error-color);
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+
+        .success {
+            color: var(--success-color);
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+
+        .redirect-message {
+            color: var(--primary-color);
+            background-color: #cce5ff;
+            border: 1px solid #b8daff;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            width: 80%;
+            margin: 15px auto;
+            font-size: 14px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .forgot-password {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        /* Modal stili */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .modal-input-group {
+            position: relative;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .modal-input-group i {
+            position: absolute;
+            left: 11%;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+
+        .modal-content input {
+            width: 80%;
+            margin: 10px 0;
+            padding: 10px 10px 10px 35px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .password-strength {
+            width: 80%;
+            margin: 0 auto 15px;
+            font-size: 14px;
+            text-align: left;
+            color: #666;
+        }
+
+        .strength-meter {
+            height: 5px;
+            width: 80%;
+            margin: 5px auto;
+            background: #eee;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .strength-meter-fill {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s, background 0.3s;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .modal-content button {
+            padding: 10px 20px;
+            margin: 0;
+            width: auto;
+        }
+
+        /* Kullanıcı Listesi Stilleri */
+        .user-list {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .user-list th, .user-list td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .user-list th {
+            background-color: #f8f9fa;
+            position: sticky;
+            top: 0;
+        }
+
+        .user-list tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .password-cell {
+            font-family: monospace;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .toggle-password {
+            background: none;
+            border: none;
+            color: #007bff;
+            cursor: pointer;
+            margin-left: 5px;
+            font-size: 12px;
+        }
+
+        .delete-btn {
+            background-color: var(--error-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background-color: #bd2130;
+        }
+
+        .admin-actions {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .user-list {
+                font-size: 12px;
+            }
+            
+            .user-list th, .user-list td {
+                padding: 8px 5px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .container input, 
+            .container button {
+                width: 100%;
+            }
+            
+            .input-group i {
+                left: 15px;
+            }
+            
+            .password-toggle {
+                right: 15px;
+            }
+            
+            .remember-forgot {
+                width: 100%;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .modal-content {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Giriş Yap veya Kayıt Ol</h2>
+        <div class="input-group">
+            <i class="fas fa-user"></i>
+            <input type="text" id="usernameInput" placeholder="Kullanıcı adı" />
+        </div>
+        <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="passwordInput" placeholder="Şifre" />
+            <span class="password-toggle" id="passwordToggle">
+                <i class="far fa-eye"></i>
+            </span>
+        </div>
+        
+        <div class="remember-forgot">
+            <label class="remember-me">
+                <input type="checkbox" id="rememberMe">
+                Beni hatırla
+            </label>
+            <a href="#" class="forgot-password">Şifremi unuttum</a>
+        </div>
+        
+        <div class="button-group">
+            <button id="loginButton">Giriş Yap</button>
+            <button id="registerButton" class="btn-register">Kayıt Ol</button>
+            <button id="adminButton" class="btn-admin">Admin Girişi</button>
+        </div>
+        
+        <div id="errorMessage" class="error">Geçersiz kullanıcı adı veya şifre.</div>
+        <div id="successMessage" class="success">Başarıyla giriş yaptınız! Yönlendiriliyorsunuz...</div>
+        <div id="redirectMessage" class="redirect-message">Chat sayfasına yönlendiriliyorsunuz. Lütfen bekleyin...</div>
+    </div>
+
+    <!-- Kayıt Ol Modal -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <h3>Yeni Kullanıcı Oluştur</h3>
+            <div class="modal-input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="newUsername" placeholder="Yeni Kullanıcı Adı" />
+            </div>
+            <div class="modal-input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="newPassword" placeholder="Yeni Şifre" />
+                <span class="password-toggle" id="newPasswordToggle">
+                    <i class="far fa-eye"></i>
+                </span>
+            </div>
+            
+            <div class="password-strength">
+                <div>Şifre güçlülüğü: <span id="passwordStrengthText">Zayıf</span></div>
+                <div class="strength-meter">
+                    <div class="strength-meter-fill" id="strengthMeter"></div>
+                </div>
+            </div>
+            
+            <div class="modal-buttons">
+                <button id="confirmRegister">Kaydet</button>
+                <button id="cancelRegister" style="background: #6c757d;">İptal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Giriş Modal -->
+    <div class="modal" id="adminModal">
+        <div class="modal-content">
+            <h3>Admin Girişi</h3>
+            <div class="modal-input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="adminUsername" placeholder="Admin Kullanıcı Adı" />
+            </div>
+            <div class="modal-input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="adminPassword" placeholder="Admin Şifresi" />
+                <span class="password-toggle" id="adminPasswordToggle">
+                    <i class="far fa-eye"></i>
+                </span>
+            </div>
+            
+            <div class="modal-buttons">
+                <button id="confirmAdminLogin">Giriş Yap</button>
+                <button id="cancelAdminLogin" style="background: #6c757d;">İptal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div class="modal" id="adminPanelModal">
+        <div class="modal-content">
+            <h3>Kullanıcı Yönetim Paneli</h3>
+            
+            <div id="userListContainer">
+                <table class="user-list">
+                    <thead>
+                        <tr>
+                            <th>Kullanıcı Adı</th>
+                            <th>Şifre</th>
+                            <th>İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userListBody">
+                        <!-- Kullanıcı listesi buraya dinamik olarak eklenecek -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="admin-actions">
+                <button id="refreshUserList">Listeyi Yenile</button>
+                <button id="closeAdminPanel" style="background: #6c757d;">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM elementlerini seçme
+        const loginButton = document.getElementById("loginButton");
+        const registerButton = document.getElementById("registerButton");
+        const adminButton = document.getElementById("adminButton");
+        const usernameInput = document.getElementById("usernameInput");
+        const passwordInput = document.getElementById("passwordInput");
+        const errorMessage = document.getElementById("errorMessage");
+        const successMessage = document.getElementById("successMessage");
+        const redirectMessage = document.getElementById("redirectMessage");
+        const registerModal = document.getElementById("registerModal");
+        const adminModal = document.getElementById("adminModal");
+        const adminPanelModal = document.getElementById("adminPanelModal");
+        const newUsernameInput = document.getElementById("newUsername");
+        const newPasswordInput = document.getElementById("newPassword");
+        const confirmRegister = document.getElementById("confirmRegister");
+        const cancelRegister = document.getElementById("cancelRegister");
+        const passwordToggle = document.getElementById("passwordToggle");
+        const newPasswordToggle = document.getElementById("newPasswordToggle");
+        const rememberMe = document.getElementById("rememberMe");
+        const strengthMeter = document.getElementById("strengthMeter");
+        const passwordStrengthText = document.getElementById("passwordStrengthText");
+        const adminUsername = document.getElementById("adminUsername");
+        const adminPassword = document.getElementById("adminPassword");
+        const adminPasswordToggle = document.getElementById("adminPasswordToggle");
+        const confirmAdminLogin = document.getElementById("confirmAdminLogin");
+        const cancelAdminLogin = document.getElementById("cancelAdminLogin");
+        const userListBody = document.getElementById("userListBody");
+        const refreshUserList = document.getElementById("refreshUserList");
+        const closeAdminPanel = document.getElementById("closeAdminPanel");
+
+        // Admin bilgileri
+        const ADMIN_USERNAME = "mak1029";
+        const ADMIN_PASSWORD = "1029makas1";
+
+        // Kullanıcılar - LocalStorage'dan yükle
+        let users = JSON.parse(localStorage.getItem("users")) || {
+            "arda": "12345",
+            "mustafa": "mak1029",
+            "celo": "celo_123",
+            "mak1029": "1029makas1"
+        };
+
+        // Hatırlanan kullanıcı bilgisi varsa yükle
+        const rememberedUser = localStorage.getItem("rememberedUser");
+        if (rememberedUser) {
+            const userData = JSON.parse(rememberedUser);
+            usernameInput.value = userData.username;
+            passwordInput.value = userData.password;
+            rememberMe.checked = true;
+        }
+
+        // Şifre göster/gizle işlevi
+        function setupPasswordToggle(toggleElement, passwordField) {
+            toggleElement.addEventListener("click", function() {
+                const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
+                passwordField.setAttribute("type", type);
+                
+                // İkonu değiştir
+                const eyeIcon = toggleElement.querySelector("i");
+                eyeIcon.classList.toggle("fa-eye");
+                eyeIcon.classList.toggle("fa-eye-slash");
+            });
+        }
+
+        setupPasswordToggle(passwordToggle, passwordInput);
+        setupPasswordToggle(newPasswordToggle, newPasswordInput);
+        setupPasswordToggle(adminPasswordToggle, adminPassword);
+
+        // Şifre güçlülük kontrolü
+        newPasswordInput.addEventListener("input", function() {
+            const password = newPasswordInput.value;
+            let strength = 0;
+            let text = "";
+            
+            // Şifre güçlülük kontrolü
+            if (password.length > 5) strength += 1;
+            if (password.length > 7) strength += 1;
+            if (/[A-Z]/.test(password)) strength += 1;
+            if (/[0-9]/.test(password)) strength += 1;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+            
+            // Güçlülük seviyesine göre arayüzü güncelle
+            switch(strength) {
+                case 0:
+                case 1:
+                    text = "Zayıf";
+                    strengthMeter.style.background = "#dc3545";
+                    strengthMeter.style.width = "20%";
+                    break;
+                case 2:
+                    text = "Orta";
+                    strengthMeter.style.background = "#fd7e14";
+                    strengthMeter.style.width = "40%";
+                    break;
+                case 3:
+                    text = "İyi";
+                    strengthMeter.style.background = "#ffc107";
+                    strengthMeter.style.width = "60%";
+                    break;
+                case 4:
+                    text = "Güçlü";
+                    strengthMeter.style.background = "#28a745";
+                    strengthMeter.style.width = "80%";
+                    break;
+                case 5:
+                    text = "Çok Güçlü";
+                    strengthMeter.style.background = "#20c997";
+                    strengthMeter.style.width = "100%";
+                    break;
+            }
+            
+            passwordStrengthText.textContent = text;
+        });
+
+        // Enter tuşu ile giriş yapma
+        function setupEnterKey(inputField, button) {
+            inputField.addEventListener("keypress", function(e) {
+                if (e.key === "Enter") {
+                    button.click();
+                }
+            });
+        }
+
+        setupEnterKey(usernameInput, loginButton);
+        setupEnterKey(passwordInput, loginButton);
+        setupEnterKey(newUsernameInput, confirmRegister);
+        setupEnterKey(newPasswordInput, confirmRegister);
+        setupEnterKey(adminUsername, confirmAdminLogin);
+        setupEnterKey(adminPassword, confirmAdminLogin);
+
+        // Giriş yap işlemi
+        loginButton.addEventListener("click", function() {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            if (!username || !password) {
+                showError("Lütfen kullanıcı adı ve şifre giriniz.");
+                return;
+            }
+
+            if (users[username] && users[username] === password) {
+                // Beni hatırla seçeneği
+                if (rememberMe.checked) {
+                    localStorage.setItem("rememberedUser", JSON.stringify({
+                        username: username,
+                        password: password
+                    }));
+                } else {
+                    localStorage.removeItem("rememberedUser");
+                }
+                
+                hideMessages();
+                showRedirectMessage();
+                
+                // 2 saniye sonra chat sayfasına yönlendir
+                setTimeout(function() {
+                    window.location.href = "chat.html?username=" + encodeURIComponent(username);
+                }, 1150);
+                
+            } else {
+                showError("Geçersiz kullanıcı adı veya şifre.");
+            }
+        });
+
+        // Hata mesajı göster
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = "block";
+            successMessage.style.display = "none";
+            redirectMessage.style.display = "none";
+        }
+
+        // Başarı mesajı göster
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.style.display = "block";
+            errorMessage.style.display = "none";
+            redirectMessage.style.display = "none";
+        }
+
+        // Yönlendirme mesajı göster
+        function showRedirectMessage() {
+            redirectMessage.style.display = "block";
+            successMessage.style.display = "none";
+            errorMessage.style.display = "none";
+        }
+
+        // Mesajları gizle
+        function hideMessages() {
+            errorMessage.style.display = "none";
+            successMessage.style.display = "none";
+            redirectMessage.style.display = "none";
+        }
+
+        // Kayıt ol butonuna basıldığında modalı göster
+        registerButton.addEventListener("click", function() {
+            registerModal.style.display = "flex";
+            newUsernameInput.value = "";
+            newPasswordInput.value = "";
+            strengthMeter.style.width = "0%";
+            passwordStrengthText.textContent = "Zayıf";
+        });
+
+        // Kaydet butonu
+        confirmRegister.addEventListener("click", function() {
+            const newUsername = newUsernameInput.value.trim();
+            const newPassword = newPasswordInput.value.trim();
+
+            if (!newUsername || !newPassword) {
+                alert("Kullanıcı adı ve şifre boş bırakılamaz!");
+                return;
+            }
+
+            if (newUsername.length < 3) {
+                alert("Kullanıcı adı en az 3 karakter olmalıdır!");
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                alert("Şifre en az 6 karakter olmalıdır!");
+                return;
+            }
+
+            if (users[newUsername]) {
+                alert("Bu kullanıcı adı zaten kullanılıyor!");
+            } else {
+                users[newUsername] = newPassword;
+                localStorage.setItem("users", JSON.stringify(users)); // Kullanıcıları kaydet
+                showSuccess("Başarıyla kayıt oldunuz! Giriş yapabilirsiniz.");
+                registerModal.style.display = "none";
+                newUsernameInput.value = "";
+                newPasswordInput.value = "";
+            }
+        });
+
+        // İptal butonu
+        cancelRegister.addEventListener("click", function() {
+            registerModal.style.display = "none";
+        });
+
+        // Admin butonuna tıklama
+        adminButton.addEventListener("click", function() {
+            adminModal.style.display = "flex";
+            adminUsername.value = "";
+            adminPassword.value = "";
+        });
+
+        // Admin girişi
+        confirmAdminLogin.addEventListener("click", function() {
+            const username = adminUsername.value.trim();
+            const password = adminPassword.value.trim();
+
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                adminModal.style.display = "none";
+                showAdminPanel();
+            } else {
+                alert("Admin giriş bilgileri hatalı!");
+            }
+        });
+
+        // Admin giriş iptal
+        cancelAdminLogin.addEventListener("click", function() {
+            adminModal.style.display = "none";
+        });
+
+        // Admin panelini göster
+        function showAdminPanel() {
+            // Kullanıcı listesini güncelle
+            updateUserList();
+            adminPanelModal.style.display = "flex";
+        }
+
+        // Kullanıcı listesini güncelle
+        function updateUserList() {
+            userListBody.innerHTML = "";
+            
+            for (const username in users) {
+                if (username === ADMIN_USERNAME) continue; // Admin kullanıcısını listeleme
+                
+                const row = document.createElement("tr");
+                
+                const usernameCell = document.createElement("td");
+                usernameCell.textContent = username;
+                
+                // Şifre hücresi
+                const passwordCell = document.createElement("td");
+                passwordCell.className = "password-cell";
+                
+                const passwordText = document.createElement("span");
+                passwordText.textContent = "••••••";
+                passwordText.className = "password-text";
+                passwordText.setAttribute("data-password", users[username]);
+                
+                const toggleButton = document.createElement("button");
+                toggleButton.innerHTML = '<i class="far fa-eye"></i>';
+                toggleButton.className = "toggle-password";
+                toggleButton.addEventListener("click", function() {
+                    if (passwordText.textContent === "••••••") {
+                        passwordText.textContent = passwordText.getAttribute("data-password");
+                        toggleButton.innerHTML = '<i class="far fa-eye-slash"></i>';
+                    } else {
+                        passwordText.textContent = "••••••";
+                        toggleButton.innerHTML = '<i class="far fa-eye"></i>';
+                    }
+                });
+                
+                passwordCell.appendChild(passwordText);
+                passwordCell.appendChild(toggleButton);
+                
+                // Silme butonu
+                const actionCell = document.createElement("td");
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Sil";
+                deleteButton.classList.add("delete-btn");
+                deleteButton.addEventListener("click", function() {
+                    deleteUser(username);
+                });
+                
+                actionCell.appendChild(deleteButton);
+                
+                // Hücreleri satıra ekle
+                row.appendChild(usernameCell);
+                row.appendChild(passwordCell);
+                row.appendChild(actionCell);
+                
+                userListBody.appendChild(row);
+            }
+        }
+
+        // Kullanıcı silme
+        function deleteUser(username) {
+            if (confirm(`${username} kullanıcısını silmek istediğinize emin misiniz?`)) {
+                delete users[username];
+                localStorage.setItem("users", JSON.stringify(users));
+                updateUserList();
+                alert("Kullanıcı başarıyla silindi.");
+            }
+        }
+
+        // Kullanıcı listesini yenile
+        refreshUserList.addEventListener("click", function() {
+            updateUserList();
+        });
+
+        // Admin panelini kapat
+        closeAdminPanel.addEventListener("click", function() {
+            adminPanelModal.style.display = "none";
+        });
+
+        // Modal dışına tıklanınca kapat
+        window.addEventListener("click", function(event) {
+            if (event.target === registerModal) {
+                registerModal.style.display = "none";
+            }
+            if (event.target === adminModal) {
+                adminModal.style.display = "none";
+            }
+            if (event.target === adminPanelModal) {
+                adminPanelModal.style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>
