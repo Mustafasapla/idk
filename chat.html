@@ -494,26 +494,154 @@
             color: white;
         }
 
+        /* Mobil Görünüm İyileştirmeleri */
         @media (max-width: 768px) {
             .chat-container {
                 flex-direction: column;
                 height: 100vh;
                 width: 100%;
                 border-radius: 0;
+                position: fixed;
+                top: 0;
+                left: 0;
             }
             
             .sidebar {
                 width: 100%;
-                height: 35%;
+                height: 40vh; /* Daha iyi bir yükseklik */
+                min-height: 250px; /* Minimum yükseklik */
+                padding: 15px;
+                overflow-y: auto;
+                order: 2; /* Alt kısma taşı */
             }
             
             .chat-main {
                 width: 100%;
-                height: 65%;
+                height: 60vh; /* Daha dengeli yükseklik */
+                order: 1; /* Üst kısma taşı */
             }
             
             .message {
                 max-width: 90%;
+            }
+            
+            /* Arkadaş ekleme alanını daha görünür yap */
+            .add-friend-container {
+                position: sticky;
+                bottom: 0;
+                background: rgba(248, 249, 250, 0.95);
+                padding: 10px 0;
+                margin-top: 10px;
+                border-top: 1px solid #dee2e6;
+            }
+            
+            .friends-container {
+                max-height: calc(100% - 150px); /* Arkadaş ekleme alanı için yer bırak */
+                overflow-y: auto;
+            }
+            
+            /* Başlık boyutlarını küçült */
+            .sidebar-header h2 {
+                font-size: 18px;
+            }
+            
+            .chat-title {
+                font-size: 16px;
+            }
+            
+            /* Mesaj alanını optimize et */
+            .chat-messages {
+                padding: 15px;
+            }
+            
+            .chat-input {
+                padding: 10px 15px;
+            }
+            
+            .chat-input input {
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+            
+            .chat-input button {
+                padding: 10px 15px;
+            }
+        }
+
+        /* Çok küçük ekranlar için ek iyileştirmeler */
+        @media (max-width: 480px) {
+            .sidebar {
+                height: 45vh; /* Daha fazla alan */
+                min-height: 280px;
+            }
+            
+            .chat-main {
+                height: 55vh;
+            }
+            
+            .sidebar-header h2 {
+                font-size: 16px;
+            }
+            
+            .sidebar-header p {
+                font-size: 12px;
+            }
+            
+            .friends-list li {
+                padding: 10px 12px;
+                font-size: 14px;
+            }
+            
+            .friend-avatar {
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
+            }
+            
+            .add-friend-container input {
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            .add-friend-container button {
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            .chat-header {
+                padding: 10px 15px;
+            }
+            
+            .chat-title {
+                font-size: 14px;
+            }
+            
+            .chat-actions button {
+                font-size: 14px;
+                margin-left: 8px;
+            }
+        }
+
+        /* Yatay modda telefonlar için */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .chat-container {
+                flex-direction: row; /* Yatay modda yan yana göster */
+            }
+            
+            .sidebar {
+                width: 40%;
+                height: 100vh;
+                order: 1;
+            }
+            
+            .chat-main {
+                width: 60%;
+                height: 100vh;
+                order: 2;
+            }
+            
+            .friends-container {
+                max-height: calc(100% - 200px);
             }
         }
 
@@ -1099,16 +1227,13 @@
             showNotification("Sayfa yenilendi");
         });
 
-  // Enter tuşu ile mesaj gönderme
-messageInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.shiftKey) { // Shift + Enter ile satır atlanacak
-        e.preventDefault(); // Enter ile satır atlamayı engelle
-        sendMessage();      // Mesajı tek sefer gönder
-    }
-});
-
-
-        
+        // Enter tuşu ile mesaj gönderme
+        messageInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
 
         sendButton.addEventListener("click", sendMessage);
         addFriendButton.addEventListener("click", sendFriendRequest);
